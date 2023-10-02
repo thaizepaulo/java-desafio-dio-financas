@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Setter
 @Getter
 @Entity
@@ -15,5 +17,8 @@ public class Conta {
 
     @Column(nullable = false)
     private String descricao;
+
+    @Column
+    private BigDecimal saldo;
 
 }

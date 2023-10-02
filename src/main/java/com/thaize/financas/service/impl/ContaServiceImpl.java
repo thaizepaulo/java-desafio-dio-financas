@@ -6,6 +6,7 @@ import com.thaize.financas.service.ContaService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -36,7 +37,7 @@ public class ContaServiceImpl implements ContaService {
         if (conta.getId() != null && contaRepository.existsById(conta.getId())) {
             throw new IllegalArgumentException("Conta já existe.");
         }
-
+        conta.setSaldo(BigDecimal.ZERO);
         return contaRepository.save(conta);
     }
 
