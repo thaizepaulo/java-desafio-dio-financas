@@ -1,5 +1,6 @@
 package com.thaize.financas.service.impl;
 
+import com.thaize.financas.dto.TransacaoDtoSave;
 import com.thaize.financas.model.TipoTransacao;
 import com.thaize.financas.model.Transacao;
 import com.thaize.financas.repository.ContaRepository;
@@ -37,10 +38,15 @@ public class TransacaoServiceImpl implements TransacaoService {
 
     @Override
     @Transactional
-    public Transacao create(Transacao transacao) {
-        if (transacao.getId() != null && transacaoRepository.existsById(transacao.getId())) {
-            throw new IllegalArgumentException("Transação já existe.");
+    public Transacao create(TransacaoDtoSave transacaoDtoSave) {
+
+        if (transacaoDtoSave.getIdConta() == null) {
+            throw new IllegalArgumentException("ID da conta não informado.");
         }
+
+        Transacao transacao = new Transacao(transacaoDtoSave);
+        transacao.setConta(contaRepository.findById(transacaoDtoSave.getIdConta())
+                .orElseThrow(() -> new IllegalArgumentException("Conta não existe.")));
 
         if (transacao.getConta().getSaldo() == null) {
             transacao.getConta().setSaldo(BigDecimal.ZERO);
@@ -57,28 +63,32 @@ public class TransacaoServiceImpl implements TransacaoService {
 
     @Override
     @Transactional
-    public Transacao update(Long id, Transacao transacao) {
+    public Transacao update(Long id, TransacaoDtoSave transacaoDtoSave) {
         if (id == null) {
             throw new IllegalArgumentException("ID não informado.");
         }
 
+        Transacao transacaoParaSalvar = new Transacao(transacaoDtoSave);
+        transacaoParaSalvar.setId(id);
+
         Transacao transacaoBD = transacaoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Transação não existe."));
+
         if (transacaoBD.getTipoTransacao().equals(TipoTransacao.CREDITO)) {
             transacaoBD.getConta().setSaldo(transacaoBD.getConta().getSaldo().subtract(transacaoBD.getValor()));
         } else {
             transacaoBD.getConta().setSaldo(transacaoBD.getConta().getSaldo().add(transacaoBD.getValor()));
         }
 
-        if (transacao.getTipoTransacao().equals(TipoTransacao.CREDITO)) {
-            transacaoBD.getConta().setSaldo(transacaoBD.getConta().getSaldo().add(transacao.getValor()));
+        if (transacaoParaSalvar.getTipoTransacao().equals(TipoTransacao.CREDITO)) {
+            transacaoBD.getConta().setSaldo(transacaoBD.getConta().getSaldo().add(transacaoParaSalvar.getValor()));
         } else {
-            transacaoBD.getConta().setSaldo(transacaoBD.getConta().getSaldo().subtract(transacao.getValor()));
+            transacaoBD.getConta().setSaldo(transacaoBD.getConta().getSaldo().subtract(transacaoParaSalvar.getValor()));
         }
+
         transacaoBD.setConta(contaRepository.save(transacaoBD.getConta()));
 
-        transacao.setId(id);
-        return transacaoRepository.save(transacao);
+        return transacaoRepository.save(transacaoParaSalvar);
     }
 
     @Override

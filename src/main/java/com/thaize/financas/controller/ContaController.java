@@ -1,5 +1,6 @@
 package com.thaize.financas.controller;
 
+import com.thaize.financas.dto.ContaDtoSave;
 import com.thaize.financas.model.Conta;
 import com.thaize.financas.service.ContaService;
 import org.springframework.http.ResponseEntity;
@@ -32,16 +33,16 @@ public class ContaController {
     }
 
     @PostMapping
-    public ResponseEntity<Conta> create(@RequestBody Conta conta) {
-        Conta contaCriada = contaService.create(conta);
+    public ResponseEntity<Conta> create(@RequestBody ContaDtoSave contaDtoSave) {
+        Conta contaCriada = contaService.create(contaDtoSave);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(contaCriada.getId()).toUri();
         return ResponseEntity.created(location).body(contaCriada);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Conta> update(@PathVariable Long id, @RequestBody Conta conta) {
-        Conta contaAtualizada = contaService.update(id, conta);
+    public ResponseEntity<Conta> update(@PathVariable Long id, @RequestBody ContaDtoSave contaDtoSave) {
+        Conta contaAtualizada = contaService.update(id, contaDtoSave);
         return ResponseEntity.ok(contaAtualizada);
     }
 

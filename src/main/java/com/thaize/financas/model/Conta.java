@@ -1,7 +1,9 @@
 package com.thaize.financas.model;
 
+import com.thaize.financas.dto.ContaDtoSave;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -9,6 +11,7 @@ import java.math.BigDecimal;
 @Setter
 @Getter
 @Entity
+@NoArgsConstructor
 public class Conta {
 
     @Id
@@ -20,5 +23,14 @@ public class Conta {
 
     @Column
     private BigDecimal saldo;
+
+    public Conta(Long id) {
+        this.setId(id);
+    }
+
+    public Conta(ContaDtoSave contaDtoSave) {
+        this.setDescricao(contaDtoSave.getDescricao());
+    }
+
 
 }
