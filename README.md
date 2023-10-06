@@ -37,4 +37,5 @@ classDiagram
 
 ## Endereço para acesso à api:
 https://financas-prod.up.railway.app/swagger-ui/index.html
+
 **OBS**: Como está sendo disponibilizado por uma plataforma de forma gratuita, esta pode não estar mais disponível.
